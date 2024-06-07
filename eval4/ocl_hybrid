@@ -1,0 +1,1 @@
+OMP_SCHEDULE=static OMP_NUM_THRADS=48 TILEY=16 TILEX=32 ./run -k ssandPile -o -s 2048 -v ocl_hybrid -tw 32 -th 16 -n -wt opt -a alea

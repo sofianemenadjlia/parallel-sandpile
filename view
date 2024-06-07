@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+EASYPAPDIR=${EASYPAPDIR:-.}
+
+error()
+{
+    echo "$@" >&2
+    exit 1
+}
+
+COMPARE=no
+ARGS=()
+
+for ((i = 1; i <= $#; i++ )); do
+    case ${!i} in
+        -c|--compare)
+            COMPARE=yes
+            continue
+            ;;
+        -d|--dir)
+            if (( i < $# )); then
+                n=$((i + 1))
+                TRACEDIR=${!n}
+            fi
+            ;;
+        -p|--params)
+            # use params file if available
+            use_params=yes
+            continue
+            ;;
+        *)
+            ;;
+    esac
+    ARGS+=("${!i}")
+done
+
+if [[ ${use_params} = yes ]]; then
+    if [[ -f ${TRACEDIR}/params.txt ]]; then
+        ARGS+=($(cat ${TRACEDIR}/params.txt))
+        exec $0 ${ARGS[@]}
+    else
+        echo "Warning: Params not found"
+    fi
+
+fi
+
+# source common vars
+. ${EASYPAPDIR}/script/easypap-common.bash
+
+# build easyview if needed
+if [[ ! -f ${VIEW} ]]; then
+    echo "Building ${VIEW}"
+    make -C ${EASYPAPDIR}/traces
+fi
+
+if [[ ${COMPARE} == "yes" ]]; then
+    [[ -f ${TRACEFILE} && -f ${OLDTRACEFILE} ]] || error "Comparing trace files requires two files under ${TRACEDIR}"
+    ARGS+=("${TRACEFILE}" "${OLDTRACEFILE}")
+fi
+
+exec ${VIEW} ${ARGS[@]}

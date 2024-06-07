@@ -1,0 +1,1 @@
+OMP_NUM_THREADS=46 ./run -k ssandPile -v omp_lazy -wt lazy_avx -n -s 2048 -a alea -tw 16 -th 16

@@ -1,0 +1,1 @@
+OMP_NUM_THREADS=48 ./run -k ssandPile -v omp_tiled -wt avx -n -s 512 -tw 512 -th 16
